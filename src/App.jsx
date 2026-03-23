@@ -1,7 +1,8 @@
-import { Suspense } from "react";
+import { lazy, Suspense } from "react";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import CurrencyRates from "./components/CurrencyRates";
+
+const CurrencyRates = lazy(() => import("./components/CurrencyRates"));
 
 function App() {
   return (
