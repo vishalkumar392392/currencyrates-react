@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import CurrencyRates from "./components/CurrencyRates";
 

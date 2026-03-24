@@ -1,12 +1,36 @@
 import { useState, useMemo, useCallback } from 'react';
-import styles from './DataTable.module.css';
+import {
+  Container,
+  Toolbar,
+  SearchInput,
+  TableWrapper,
+  StyledTable,
+  Th,
+  CheckboxTh,
+  HeaderContent,
+  SortIconSpan,
+  FilterTh,
+  FilterInput,
+  Td,
+  CheckboxTd,
+  TableRow,
+  EmptyTd,
+  TooltipWrapper,
+  TooltipBox,
+  PaginationWrapper,
+  PageInfo,
+  PageControls,
+  PageBtn,
+  PageNumber,
+  PageSizeLabel,
+  PageSizeSelect,
+} from './DataTable.styles';
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function SearchBar({ value, onChange, placeholder }) {
   return (
-    <input
-      className={styles.searchInput}
+    <SearchInput
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -17,24 +41,19 @@ function SearchBar({ value, onChange, placeholder }) {
 
 function ColumnFilter({ column, value, onChange }) {
   return (
-    <input
-      className={styles.filterInput}
+    <FilterInput
       type="text"
       value={value ?? ''}
       onChange={(e) => onChange(column.key, e.target.value)}
-      placeholder={`Filter…`}
+      placeholder="Filter…"
       onClick={(e) => e.stopPropagation()}
     />
   );
 }
 
 function SortIcon({ direction }) {
-  if (!direction) return <span className={styles.sortIcon}>⇅</span>;
-  return (
-    <span className={`${styles.sortIcon} ${styles.sortActive}`}>
-      {direction === 'asc' ? '↑' : '↓'}
-    </span>
-  );
+  if (!direction) return <SortIconSpan>⇅</SortIconSpan>;
+  return <SortIconSpan $active>{direction === 'asc' ? '↑' : '↓'}</SortIconSpan>;
 }
 
 function Pagination({ page, totalPages, pageSize, pageSizeOptions, onPageChange, onPageSizeChange, totalRows }) {
@@ -42,56 +61,43 @@ function Pagination({ page, totalPages, pageSize, pageSizeOptions, onPageChange,
   const end   = Math.min(page * pageSize, totalRows);
 
   return (
-    <div className={styles.pagination}>
-      <span className={styles.pageInfo}>
+    <PaginationWrapper>
+      <PageInfo>
         {totalRows === 0 ? '0 rows' : `${start}–${end} of ${totalRows}`}
-      </span>
+      </PageInfo>
 
-      <div className={styles.pageControls}>
-        <button
-          className={styles.pageBtn}
-          onClick={() => onPageChange(1)}
-          disabled={page === 1}
-          title="First page"
-        >{'«'}</button>
-        <button
-          className={styles.pageBtn}
-          onClick={() => onPageChange(page - 1)}
-          disabled={page === 1}
-          title="Previous page"
-        >{'‹'}</button>
+      <PageControls>
+        <PageBtn onClick={() => onPageChange(1)} disabled={page === 1} title="First page">
+          {'«'}
+        </PageBtn>
+        <PageBtn onClick={() => onPageChange(page - 1)} disabled={page === 1} title="Previous page">
+          {'‹'}
+        </PageBtn>
 
-        <span className={styles.pageNumber}>Page {page} of {totalPages || 1}</span>
+        <PageNumber>Page {page} of {totalPages || 1}</PageNumber>
 
-        <button
-          className={styles.pageBtn}
-          onClick={() => onPageChange(page + 1)}
-          disabled={page >= totalPages}
-          title="Next page"
-        >{'›'}</button>
-        <button
-          className={styles.pageBtn}
-          onClick={() => onPageChange(totalPages)}
-          disabled={page >= totalPages}
-          title="Last page"
-        >{'»'}</button>
-      </div>
+        <PageBtn onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} title="Next page">
+          {'›'}
+        </PageBtn>
+        <PageBtn onClick={() => onPageChange(totalPages)} disabled={page >= totalPages} title="Last page">
+          {'»'}
+        </PageBtn>
+      </PageControls>
 
       {pageSizeOptions && (
-        <label className={styles.pageSizeLabel}>
+        <PageSizeLabel>
           Rows per page:
-          <select
-            className={styles.pageSizeSelect}
+          <PageSizeSelect
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
           >
             {pageSizeOptions.map((n) => (
               <option key={n} value={n}>{n}</option>
             ))}
-          </select>
-        </label>
+          </PageSizeSelect>
+        </PageSizeLabel>
       )}
-    </div>
+    </PaginationWrapper>
   );
 }
 
@@ -252,8 +258,8 @@ export default function DataTable({
   };
 
   // Selection
-  const allPageKeys   = paged.map((row, i) => String(getRowKey(row, i)));
-  const allPageSelected = allPageKeys.length > 0 && allPageKeys.every((k) => selectedKeys.has(k));
+  const allPageKeys      = paged.map((row, i) => String(getRowKey(row, i)));
+  const allPageSelected  = allPageKeys.length > 0 && allPageKeys.every((k) => selectedKeys.has(k));
   const somePageSelected = allPageKeys.some((k) => selectedKeys.has(k));
 
   const toggleRow = (key, row) => {
@@ -280,27 +286,27 @@ export default function DataTable({
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className={`${styles.container} ${className ?? ''}`}>
+    <Container className={className}>
 
       {/* Toolbar */}
       {searchable && (
-        <div className={styles.toolbar}>
+        <Toolbar>
           <SearchBar
             value={searchTerm}
             onChange={handleSearch}
             placeholder={searchPlaceholder}
           />
-        </div>
+        </Toolbar>
       )}
 
       {/* Table */}
-      <div className={styles.tableWrapper}>
-        <table className={styles.table}>
+      <TableWrapper>
+        <StyledTable>
           <thead>
             {/* Header row */}
             <tr>
               {selectable && (
-                <th className={styles.checkboxCol}>
+                <CheckboxTh>
                   <input
                     type="checkbox"
                     checked={allPageSelected}
@@ -308,33 +314,33 @@ export default function DataTable({
                     onChange={toggleAllPage}
                     title="Select / deselect page"
                   />
-                </th>
+                </CheckboxTh>
               )}
               {columns.map((col) => (
-                <th
+                <Th
                   key={col.key}
-                  className={colIsSortable(col) ? styles.sortableHeader : ''}
+                  $sortable={colIsSortable(col)}
                   onClick={() => handleSort(col)}
                   title={colIsSortable(col) ? `Sort by ${col.label}` : undefined}
                 >
-                  <span className={styles.headerContent}>
+                  <HeaderContent>
                     {col.label}
                     {colIsSortable(col) && (
                       <SortIcon
                         direction={sortConfig?.key === col.key ? sortConfig.direction : null}
                       />
                     )}
-                  </span>
-                </th>
+                  </HeaderContent>
+                </Th>
               ))}
             </tr>
 
             {/* Filter row */}
             {filterable && (
-              <tr className={styles.filterRow}>
-                {selectable && <th />}
+              <tr>
+                {selectable && <FilterTh />}
                 {columns.map((col) => (
-                  <th key={col.key} className={styles.filterCell}>
+                  <FilterTh key={col.key}>
                     {col.filterable !== false && (
                       <ColumnFilter
                         column={col}
@@ -342,7 +348,7 @@ export default function DataTable({
                         onChange={handleColumnFilter}
                       />
                     )}
-                  </th>
+                  </FilterTh>
                 ))}
               </tr>
             )}
@@ -351,57 +357,52 @@ export default function DataTable({
           <tbody>
             {paged.length === 0 ? (
               <tr>
-                <td
-                  colSpan={columns.length + (selectable ? 1 : 0)}
-                  className={styles.emptyCell}
-                >
+                <EmptyTd colSpan={columns.length + (selectable ? 1 : 0)}>
                   {emptyMessage}
-                </td>
+                </EmptyTd>
               </tr>
             ) : (
               paged.map((row, index) => {
                 const key        = String(getRowKey(row, index));
                 const isSelected = selectedKeys.has(key);
                 return (
-                  <tr
+                  <TableRow
                     key={key}
-                    className={[
-                      index % 2 === 0 ? styles.rowEven : styles.rowOdd,
-                      isSelected ? styles.rowSelected : '',
-                    ].join(' ')}
+                    $even={index % 2 === 0}
+                    $selected={isSelected}
                   >
                     {selectable && (
-                      <td className={styles.checkboxCol}>
+                      <CheckboxTd>
                         <input
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => toggleRow(key, row)}
                         />
-                      </td>
+                      </CheckboxTd>
                     )}
                     {columns.map((col) => {
-                      const value = row[col.key] ?? '-';
+                      const value     = row[col.key] ?? '-';
                       const displayed = col.render ? col.render(value, row, index) : value;
                       return (
-                        <td key={col.key}>
+                        <Td key={col.key}>
                           {col.render ? (
                             displayed
                           ) : (
-                            <span className={styles.tooltipWrapper}>
+                            <TooltipWrapper>
                               {displayed}
-                              <span className={styles.tooltipBox}>{displayed}</span>
-                            </span>
+                              <TooltipBox>{displayed}</TooltipBox>
+                            </TooltipWrapper>
                           )}
-                        </td>
+                        </Td>
                       );
                     })}
-                  </tr>
+                  </TableRow>
                 );
               })
             )}
           </tbody>
-        </table>
-      </div>
+        </StyledTable>
+      </TableWrapper>
 
       {/* Pagination */}
       {pagination && (
@@ -415,6 +416,6 @@ export default function DataTable({
           totalRows={totalRows}
         />
       )}
-    </div>
+    </Container>
   );
 }

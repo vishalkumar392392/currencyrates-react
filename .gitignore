@@ -22,6 +22,7 @@ dist-ssr
 # Claude / AI tooling
 .claude
 .playwright-mcp
+test-output/
 
 # Editor directories and files
 .vscode/*
