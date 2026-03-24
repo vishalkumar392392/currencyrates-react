@@ -1,11 +1,22 @@
 import styled from "styled-components";
 
+// ── Breakpoints ───────────────────────────────────────────────────────────────
+const bp = {
+  mobile:  '640px',
+  tablet:  '1024px',
+};
+
 // ── Layout ────────────────────────────────────────────────────────────────────
 
 export const Container = styled.div`
   padding: 16px;
   font-family: Arial, sans-serif;
   font-size: 13px;
+
+  @media (max-width: ${bp.mobile}) {
+    padding: 8px;
+    font-size: 12px;
+  }
 `;
 
 // ── Toolbar ───────────────────────────────────────────────────────────────────
@@ -15,6 +26,11 @@ export const Toolbar = styled.div`
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
+
+  @media (max-width: ${bp.mobile}) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 export const SearchInput = styled.input`
@@ -29,6 +45,15 @@ export const SearchInput = styled.input`
   &:focus {
     border-color: #4a90d9;
   }
+
+  @media (max-width: ${bp.tablet}) {
+    width: 200px;
+  }
+
+  @media (max-width: ${bp.mobile}) {
+    width: 100%;
+    box-sizing: border-box;
+  }
 `;
 
 // ── Table wrapper ─────────────────────────────────────────────────────────────
@@ -39,6 +64,15 @@ export const TableWrapper = styled.div`
   max-height: 600px;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
+
+  @media (max-width: ${bp.tablet}) {
+    max-height: 480px;
+  }
+
+  @media (max-width: ${bp.mobile}) {
+    max-height: 360px;
+    border-radius: 2px;
+  }
 
   @media print {
     max-height: none;
@@ -80,6 +114,18 @@ export const Th = styled.th`
 
   &:hover {
     background-color: ${({ $sortable }) => ($sortable ? "#e8e8e8" : "#f5f5f5")};
+  }
+
+  @media (max-width: ${bp.tablet}) {
+    padding: 6px 8px;
+    min-width: 60px;
+    font-size: 12px;
+  }
+
+  @media (max-width: ${bp.mobile}) {
+    padding: 4px 6px;
+    min-width: 50px;
+    font-size: 11px;
   }
 `;
 
@@ -145,6 +191,18 @@ export const Td = styled.td`
 
   &:first-child {
     text-align: left;
+  }
+
+  @media (max-width: ${bp.tablet}) {
+    padding: 5px 8px;
+    max-width: 110px;
+    font-size: 12px;
+  }
+
+  @media (max-width: ${bp.mobile}) {
+    padding: 4px 6px;
+    max-width: 80px;
+    font-size: 11px;
   }
 `;
 
@@ -218,6 +276,12 @@ export const PaginationWrapper = styled.div`
   gap: 12px;
   margin-top: 10px;
   flex-wrap: wrap;
+
+  @media (max-width: ${bp.mobile}) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 `;
 
 export const PageInfo = styled.span`
@@ -269,6 +333,10 @@ export const PageSizeLabel = styled.label`
   font-size: 12px;
   color: #555;
   margin-left: auto;
+
+  @media (max-width: ${bp.mobile}) {
+    margin-left: 0;
+  }
 `;
 
 export const PageSizeSelect = styled.select`
@@ -297,6 +365,14 @@ export const ActionBar = styled.div`
   gap: 8px;
   margin-top: 12px;
   flex-wrap: wrap;
+
+  @media (max-width: ${bp.mobile}) {
+    justify-content: stretch;
+
+    button {
+      flex: 1;
+    }
+  }
 `;
 
 export const PrintBtn = styled.button`
@@ -348,6 +424,11 @@ export const SuccessBanner = styled.div`
   margin-bottom: 12px;
   font-size: 13px;
   color: #3c763d;
+
+  @media (max-width: ${bp.mobile}) {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
 `;
 
 export const BannerText = styled.span`
