@@ -108,7 +108,17 @@ function Pagination({ page, totalPages, pageSize, pageSizeOptions, onPageChange,
  *   // Optional features (omit the prop to disable the feature)
  *   searchable       {boolean}           global search bar
  *   searchPlaceholder {string}
- *   sortable         {boolean}           enable sorting on all columns (per-column override via col.sortable)
+ *   sortable         {boolean}           default sort behaviour for columns that don't set col.sortable
+ *                                        Column-level col.sortable always takes precedence:
+ *                                          col.sortable = true  → always sortable (even if table sortable is false)
+ *                                          col.sortable = false → never sortable  (even if table sortable is true)
+ *                                          col.sortable omitted → inherits the table-level sortable flag
+ *
+ *                                        Usage patterns:
+ *                                          • All sortable:       <DataTable sortable … />
+ *                                          • None sortable:      omit sortable, set col.sortable=true on chosen columns
+ *                                          • Mix:                <DataTable sortable … /> + col.sortable=false on exceptions
+ *
  *   filterable       {boolean}           per-column filter row
  *   selectable       {boolean}           checkbox column for row selection
  *   onSelectionChange {function}         (selectedRows) => void
@@ -158,8 +168,13 @@ export default function DataTable({
     [rowKey],
   );
 
-  const colIsSortable = (col) =>
-    col.sortable !== false && (globalSortable || col.sortable === true);
+  // Column-level sortable takes full precedence over the global flag.
+  // true/false → use column value; undefined → fall back to globalSortable.
+  const colIsSortable = (col) => {
+    if (col.sortable === true)  return true;
+    if (col.sortable === false) return false;
+    return !!globalSortable;
+  };
 
   // ── Derived data pipeline ──────────────────────────────────────────────────
   const processed = useMemo(() => {

@@ -5,7 +5,7 @@ import styles from "./CurrencyRates.module.css";
 import DataTable from "./DataTable/DataTable";
 
 const COLUMNS = [
-  { key: "currencyDescription", label: "Currency Description" },
+  { key: "currencyDescription", label: "Currency Description", sortable: true },
   { key: "calculatorIndicator", label: "Calculator Indicator" },
   { key: "nabancoMerchantRate", label: "Nabanco / Merchant Rate" },
   { key: "cashBuyRate", label: "Cash Buy Rate" },
